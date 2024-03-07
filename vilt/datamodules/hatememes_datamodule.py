@@ -13,7 +13,7 @@ class HateMemesDataModule(BaseDataModule):
 
     @property
     def dataset_name(self):
-        return "Hatefull_Memes"
+        return "Hateful_Memes"
 
     def setup(self, stage):
         super().setup(stage)

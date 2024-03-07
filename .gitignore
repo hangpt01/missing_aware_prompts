@@ -1,5 +1,5 @@
-/datasets/
-/dataset_download
+/datasets/*
+/dataset_download/*
 *.ckpt
 # Byte-compiled / optimized / DLL files
 __pycache__/

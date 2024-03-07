@@ -4,6 +4,6 @@ from .food101_datamodule import FOOD101DataModule
 
 _datamodules = {
     "mmimdb": MMIMDBDataModule,
-    "Hatefull_Memes": HateMemesDataModule,
+    "Hateful_Memes": HateMemesDataModule,
     "Food101": FOOD101DataModule,
 }

@@ -17,6 +17,7 @@ def main(_config):
 
     model = ViLTransformerSS(_config)
     exp_name = f'{_config["exp_name"]}'
+    # import pdb; pdb.set_trace()
 
     os.makedirs(_config["log_dir"], exist_ok=True)
     checkpoint_callback = pl.callbacks.ModelCheckpoint(
@@ -41,7 +42,7 @@ def main(_config):
         if isinstance(_config["num_gpus"], int)
         else len(_config["num_gpus"])
     )
-
+    # import pdb; pdb.set_trace()
     grad_steps = _config["batch_size"] // (
         _config["per_gpu_batchsize"] * num_gpus * _config["num_nodes"]
     )
@@ -59,7 +60,7 @@ def main(_config):
         max_steps=max_steps,
         callbacks=callbacks,
         logger=logger,
-        prepare_data_per_node=False,
+        # prepare_data_per_node=False,
         replace_sampler_ddp=False,
         accumulate_grad_batches=grad_steps,
         log_every_n_steps=10,

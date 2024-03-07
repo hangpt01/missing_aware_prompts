@@ -11,11 +11,14 @@ from . import _datamodules
 class MTDataModule(LightningDataModule):
     def __init__(self, _config, dist=False):
         datamodule_keys = _config["datasets"]
+        if isinstance(datamodule_keys, str):
+            datamodule_keys = [datamodule_keys]
         assert len(datamodule_keys) > 0
 
         super().__init__()
 
         self.dm_keys = datamodule_keys
+        # import pdb; pdb.set_trace()
         self.dm_dicts = {key: _datamodules[key](_config) for key in datamodule_keys}
         self.dms = [v for k, v in self.dm_dicts.items()]
 

@@ -156,7 +156,7 @@ class ViLTransformerSS(pl.LightningModule):
         self.current_tasks = list()
 
         # ===================== load downstream (test_only) ======================
-
+        # import pdb; pdb.set_trace()
         if self.hparams.config["load_path"] != "" and self.hparams.config["test_only"]:
             ckpt = torch.load(self.hparams.config["load_path"], map_location="cpu")
             state_dict = ckpt["state_dict"]

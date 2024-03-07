@@ -1,4 +1,4 @@
-CUDA_VISIBLE_DEVICES=0 python run.py with datasets=Hateful_Memes \
+python run.py with datasets=Hateful_Memes \
         load_path='vilt/pretrained_model_weight/vilt_200k_mlm_itm.ckpt' \
         exp_name='hateful_memes' \
         data_root='datasets/Hateful_Memes' \

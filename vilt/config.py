@@ -212,7 +212,7 @@ def task_finetune_vqa_randaug():
 @ex.named_config
 def task_finetune_hatememes():
     exp_name = "finetune_hatememes"
-    datasets = ["Hatefull_Memes"]
+    datasets = ["Hateful_Memes"]
     loss_names = _loss_names({"hatememes": 1})
     batch_size = 256
     max_epoch = 20
