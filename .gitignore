@@ -1,5 +1,11 @@
 /datasets/*
 /dataset_download/*
+/data_preprocessed
+/self*
+labels.pkl
+fine_tune_ViLT.py
+image_paths.pkl
+texts.pkl
 *.ckpt
 # Byte-compiled / optimized / DLL files
 __pycache__/
