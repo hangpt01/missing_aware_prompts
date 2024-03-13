@@ -33,6 +33,7 @@ class BaseDataset(torch.utils.data.Dataset):
         super().__init__()
 
         self.transforms = keys_to_transforms(transform_keys, size=image_size)
+        # import pdb; pdb.set_trace()
         self.text_column_name = text_column_name
         self.names = names
         self.max_text_len = max_text_len
@@ -49,7 +50,7 @@ class BaseDataset(torch.utils.data.Dataset):
                 for name in names
                 if os.path.isfile(f"{data_dir}/{name}.arrow")
             ]
-
+            # import pdb; pdb.set_trace()
             self.table_names = list()
             for i, name in enumerate(names):
                 self.table_names += [name] * len(tables[i])
@@ -84,6 +85,7 @@ class BaseDataset(torch.utils.data.Dataset):
         else:
             for i in range(len(self.table)):
                 self.index_mapper[i] = (i, None)
+        # import pdb; pdb.set_trace()
         
         
     @property
@@ -245,5 +247,6 @@ class BaseDataset(torch.utils.data.Dataset):
                 dict_batch[f"{txt_key}_ids_mlm"] = mlm_ids
                 dict_batch[f"{txt_key}_labels_mlm"] = mlm_labels
                 dict_batch[f"{txt_key}_masks"] = attention_mask
-
+                # import pdb; pdb.set_trace()
+                
         return dict_batch

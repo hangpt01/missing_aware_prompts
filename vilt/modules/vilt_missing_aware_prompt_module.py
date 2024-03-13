@@ -36,6 +36,7 @@ class ViLTransformerSS(pl.LightningModule):
             self.transformer = getattr(vit, self.hparams.config["vit"])(
                 pretrained=False, config=self.hparams.config
             )
+        # import pdb; pdb.set_trace()  
 
         self.pooler = heads.Pooler(config["hidden_size"])
         self.pooler.apply(objectives.init_weights)

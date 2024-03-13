@@ -1,8 +1,8 @@
-CUDA_VISIBLE_DEVICES=1 python run.py with datasets=Food101 \
+python run.py with datasets=Food101 \
         load_path='vilt/pretrained_model_weight/vilt_200k_mlm_itm.ckpt' \
         exp_name='food101' \
         data_root='datasets/Food101' \
-        num_gpus=2 \
+        num_gpus=1 \
         max_text_len=40 \
         per_gpu_batchsize=1 \
         task_finetune_food101 \

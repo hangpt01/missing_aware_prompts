@@ -59,7 +59,7 @@ class FOOD101Dataset(BaseDataset):
 
         self.missing_table = missing_table
 
-       
+
     def __getitem__(self, index):
         # index -> pair data index
         # image_index -> image index in table
@@ -95,7 +95,7 @@ class FOOD101Dataset(BaseDataset):
 
         
         labels = self.table["label"][image_index].as_py()
-        
+        # import pdb; pdb.set_trace()
         return {
             "image": image_tensor,
             "text": text,

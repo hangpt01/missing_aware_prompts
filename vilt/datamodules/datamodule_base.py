@@ -100,6 +100,7 @@ class BaseDataModule(LightningDataModule):
             image_only=self.image_only,
             missing_info=self.missing_info,
         )
+        # import pdb; pdb.set_trace()
 
     def set_val_dataset(self):
         self.val_dataset = self.dataset_cls(
