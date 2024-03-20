@@ -226,6 +226,7 @@ class ViLTransformerSS(pl.LightningModule):
             if batch["missing_type"][idx] == 0:
                 prompt = self.complete_prompt        
             elif batch["missing_type"][idx] == 1:
+                import pdb; pdb.set_trace()
                 prompt = self.missing_text_prompt
             elif batch["missing_type"][idx] == 2:
                 prompt = self.missing_img_prompt
@@ -237,17 +238,19 @@ class ViLTransformerSS(pl.LightningModule):
                 prompts = prompt
             else:
                 prompts = torch.cat([prompts, prompt], dim=0)
-        
+        import pdb; pdb.set_trace()
         if self.learnt_p:
             if self.prompt_type=='attention':
                 prompt_masks = torch.ones(prompts.shape[0], self.prompt_length//2, dtype=prompts.dtype, device=prompts.device).long()
             elif self.prompt_type=='input':
                 prompt_masks = torch.ones(prompts.shape[0], self.prompt_length*len(self.prompt_layers), dtype=prompts.dtype, device=prompts.device).long()
+                import pdb; pdb.set_trace()
         else:
             prompt_masks = torch.ones(prompts.shape[0], self.prompt_length, dtype=prompts.dtype, device=prompts.device).long()   
         
         co_masks = torch.cat([prompt_masks, text_masks, image_masks], dim=1)
         co_embeds = torch.cat([text_embeds, image_embeds], dim=1)
+        import pdb; pdb.set_trace()
         x = co_embeds.detach()
 
         for i, blk in enumerate(self.transformer.blocks):
@@ -261,7 +264,7 @@ class ViLTransformerSS(pl.LightningModule):
                     x, _attn = blk(x, mask=co_masks, prompts=prompts, learnt_p=self.learnt_p)
             else:
                 x, _attn = blk(x, mask=co_masks)
-
+        import pdb; pdb.set_trace()
         x = self.transformer.norm(x)
         
         if self.prompt_type == 'input':
