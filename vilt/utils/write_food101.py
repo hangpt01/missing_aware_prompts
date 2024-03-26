@@ -52,7 +52,7 @@ def make_arrow(root, dataset_root, single_plot=False, missing_type=None):
                 "split",
             ],
         )
-
+        import pdb; pdb.set_trace()
         table = pa.Table.from_pandas(dataframe)
 
         os.makedirs(dataset_root, exist_ok=True)

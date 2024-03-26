@@ -317,6 +317,7 @@ def set_schedule(pl_module):
         optimizer = torch.optim.SGD(optimizer_grouped_parameters, lr=lr, momentum=0.9)
 
     if pl_module.trainer.max_steps is None:
+        # import pdb; pdb.set_trace()
         max_steps = (
             len(pl_module.trainer.datamodule.train_dataloader())
             * pl_module.trainer.max_epochs

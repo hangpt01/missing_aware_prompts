@@ -4,6 +4,7 @@ python run.py with datasets=Food101 \
         data_root='datasets/Food101' \
         num_gpus=1 \
         max_text_len=40 \
-        per_gpu_batchsize=1 \
+        per_gpu_batchsize=4 \
+        batch_size=32 \
         task_finetune_food101 \
         prompt_type=input  

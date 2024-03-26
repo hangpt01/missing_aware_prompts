@@ -58,7 +58,7 @@ config:
   num_workers: 8
   optim_type: adamw
   patch_size: 32
-  per_gpu_batchsize: 1
+  per_gpu_batchsize: 32
   precision: 16
   prompt_layers:
   - 0

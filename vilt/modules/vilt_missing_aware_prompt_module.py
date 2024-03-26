@@ -211,12 +211,13 @@ class ViLTransformerSS(pl.LightningModule):
                 None,
                 None,
             )
-            
-        text_embeds, image_embeds = (
-            text_embeds + self.token_type_embeddings(torch.zeros_like(text_masks)),
+        # import pdb; pdb.set_trace()
+        # (batch, 40, 768), (batch, 217, 768)
+        text_embeds, image_embeds = (        
+            text_embeds + self.token_type_embeddings(torch.zeros_like(text_masks)), # + (batch,40)
             image_embeds
             + self.token_type_embeddings(
-                torch.full_like(image_masks, image_token_type_idx)
+                torch.full_like(image_masks, image_token_type_idx)                  # + (batch,217)
             ),
         )
         
@@ -226,56 +227,58 @@ class ViLTransformerSS(pl.LightningModule):
             if batch["missing_type"][idx] == 0:
                 prompt = self.complete_prompt        
             elif batch["missing_type"][idx] == 1:
-                import pdb; pdb.set_trace()
+                # import pdb; pdb.set_trace()
                 prompt = self.missing_text_prompt
             elif batch["missing_type"][idx] == 2:
                 prompt = self.missing_img_prompt
-                
+                # 3 prompt: ([6, 16, 768])
             if prompt.size(0) != 1:
                 prompt = prompt.unsqueeze(0)
             
             if prompts is None:
                 prompts = prompt
             else:
-                prompts = torch.cat([prompts, prompt], dim=0)
-        import pdb; pdb.set_trace()
+                prompts = torch.cat([prompts, prompt], dim=0)      #  ([batch, 6, 16, 768])
+        # import pdb; pdb.set_trace()     
         if self.learnt_p:
             if self.prompt_type=='attention':
                 prompt_masks = torch.ones(prompts.shape[0], self.prompt_length//2, dtype=prompts.dtype, device=prompts.device).long()
             elif self.prompt_type=='input':
-                prompt_masks = torch.ones(prompts.shape[0], self.prompt_length*len(self.prompt_layers), dtype=prompts.dtype, device=prompts.device).long()
-                import pdb; pdb.set_trace()
+                prompt_masks = torch.ones(prompts.shape[0], self.prompt_length*len(self.prompt_layers), dtype=prompts.dtype, device=prompts.device).long()      #torch.Size([batch, 96])
+                # import pdb; pdb.set_trace()
         else:
             prompt_masks = torch.ones(prompts.shape[0], self.prompt_length, dtype=prompts.dtype, device=prompts.device).long()   
         
-        co_masks = torch.cat([prompt_masks, text_masks, image_masks], dim=1)
-        co_embeds = torch.cat([text_embeds, image_embeds], dim=1)
-        import pdb; pdb.set_trace()
-        x = co_embeds.detach()
+        co_masks = torch.cat([prompt_masks, text_masks, image_masks], dim=1)    # torch.Size([batch, 329]);     batch, 353=257+96
+        co_embeds = torch.cat([text_embeds, image_embeds], dim=1)       # torch.Size([1, 233, 768])             batch, 257, 768
+        # import pdb; pdb.set_trace()
+        x = co_embeds.detach()      # torch.Size([1, 233, 768])     batch, 257, 768=text+img
 
         for i, blk in enumerate(self.transformer.blocks):
             if i in self.prompt_layers:
                 if self.multi_layer_prompt:
                     x, _attn = blk(x, mask=co_masks, 
-                                   prompts=prompts[:,self.prompt_layers.index(i)], 
+                                   prompts=prompts[:,self.prompt_layers.index(i)],      # batch, 16, 768
                                    learnt_p=self.learnt_p,
                                    prompt_type=self.prompt_type)
                 else:
                     x, _attn = blk(x, mask=co_masks, prompts=prompts, learnt_p=self.learnt_p)
             else:
                 x, _attn = blk(x, mask=co_masks)
-        import pdb; pdb.set_trace()
-        x = self.transformer.norm(x)
+        # import pdb; pdb.set_trace()
+        # x: torch.Size([1, 329, 768])
+        x = self.transformer.norm(x)    # x: torch.Size([1, 329, 768])
+        
         
         if self.prompt_type == 'input':
-            total_prompt_len = len(self.prompt_layers)* prompts.shape[-2]
+            total_prompt_len = len(self.prompt_layers)* prompts.shape[-2]   # len([0, 1, 2, 3, 4, 5]) * 16
         elif self.prompt_type == 'attention':
             total_prompt_len = prompts.shape[-2]
         
         text_feats, image_feats = (
             x[:,total_prompt_len : total_prompt_len+text_embeds.shape[1]],
             x[:, total_prompt_len+text_embeds.shape[1] :],
-        )
+        )       # ([1, 40, 768]), ([1, 193, 768])
         if self.prompt_type == 'input':
             cls_feats = self.pooler(x[:,total_prompt_len:total_prompt_len+1])   
 #         cls_feats = self.pooler(x[:,:prompts.size(1)].mean(dim=1,keepdim=True))
