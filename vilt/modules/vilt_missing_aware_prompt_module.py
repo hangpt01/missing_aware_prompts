@@ -142,9 +142,9 @@ class ViLTransformerSS(pl.LightningModule):
             self.missing_text_prompt.requires_grad=False           
             self.missing_img_prompt.requires_grad=False
 
-        print(self.complete_prompt)
-        print(self.missing_img_prompt)
-        print(self.missing_text_prompt)
+        # print(self.complete_prompt)
+        # print(self.missing_img_prompt)
+        # print(self.missing_text_prompt)
 
         for param in self.transformer.parameters():
             param.requires_grad=False
@@ -174,6 +174,7 @@ class ViLTransformerSS(pl.LightningModule):
         image_masks=None,
         is_train=None,
     ):
+        # import pdb; pdb.set_trace()
         if f"image_{image_token_type_idx - 1}" in batch:
             imgkey = f"image_{image_token_type_idx - 1}"
         else:
@@ -186,6 +187,7 @@ class ViLTransformerSS(pl.LightningModule):
         text_embeds = self.text_embeddings(text_ids)
         img = batch[imgkey][0]     
         
+        # import pdb; pdb.set_trace()
         if image_embeds is None and image_masks is None:
                    
             (
@@ -254,6 +256,7 @@ class ViLTransformerSS(pl.LightningModule):
         # import pdb; pdb.set_trace()
         x = co_embeds.detach()      # torch.Size([1, 233, 768])     batch, 257, 768=text+img
 
+        import pdb; pdb.set_trace()
         for i, blk in enumerate(self.transformer.blocks):
             if i in self.prompt_layers:
                 if self.multi_layer_prompt:
@@ -261,11 +264,13 @@ class ViLTransformerSS(pl.LightningModule):
                                    prompts=prompts[:,self.prompt_layers.index(i)],      # batch, 16, 768
                                    learnt_p=self.learnt_p,
                                    prompt_type=self.prompt_type)
+                    import pdb; pdb.set_trace()
                 else:
                     x, _attn = blk(x, mask=co_masks, prompts=prompts, learnt_p=self.learnt_p)
             else:
                 x, _attn = blk(x, mask=co_masks)
-        # import pdb; pdb.set_trace()
+                import pdb; pdb.set_trace()
+        import pdb; pdb.set_trace()
         # x: torch.Size([1, 329, 768])
         x = self.transformer.norm(x)    # x: torch.Size([1, 329, 768])
         
@@ -302,6 +307,7 @@ class ViLTransformerSS(pl.LightningModule):
 
     def forward(self, batch):
         ret = dict()
+        # import pdb; pdb.set_trace()
         if len(self.current_tasks) == 0:
             ret.update(self.infer(batch))
             return ret

@@ -121,7 +121,7 @@ class BaseDataset(torch.utils.data.Dataset):
         index, caption_index = self.index_mapper[raw_index]
 
         text = self.all_texts[index][caption_index]
-
+        # import pdb; pdb.set_trace()
         encoding = self.tokenizer(
             text,
             padding="max_length",
